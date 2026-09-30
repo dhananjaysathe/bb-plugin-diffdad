@@ -95,11 +95,20 @@ export default async function plugin(bb: BbPluginApi) {
       description: "Where `dad daemon` listens. Default port is 4319; change it if you started the daemon with --port.",
       default: "http://localhost:4319",
     },
+    publicUrl: {
+      type: "string",
+      label: "Diff Dad public URL",
+      description:
+        "Optional. URL the embedded page loads, for viewing bb from another device (e.g. from `bb connect expose 4319`). The plugin itself still talks to the daemon URL.",
+      default: "",
+    },
   });
   const normalize = (url: string) => url.trim().replace(/\/$/, "") || "http://localhost:4319";
   let base = normalize((await settings.get()).daemonUrl);
+  let publicBase = (await settings.get()).publicUrl.trim().replace(/\/$/, "");
   settings.onChange((next) => {
     base = normalize(next.daemonUrl);
+    publicBase = next.publicUrl.trim().replace(/\/$/, "");
     unitsCache = null;
     bb.log.info(`daemon url changed to ${base}`);
   });
@@ -197,7 +206,7 @@ export default async function plugin(bb: BbPluginApi) {
   }
 
   bb.rpc.register(rpcContract, {
-    daemon_url: async () => ({ url: base, up: await up() }),
+    daemon_url: async () => ({ url: publicBase || base, up: await up() }),
     units_mine: async (input) => {
       try {
         if (input?.refresh) {

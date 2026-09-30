@@ -11,7 +11,7 @@ A [BB](https://getbb.app) plugin that wraps a running [Diff Dad](https://github.
 
 ## Requirements
 
-- A running daemon: `dad daemon` (or `dad daemon install`). Default URL is `http://localhost:4319`. Change it in the plugin settings or with `bb plugin config diffdad set daemonUrl <url>`.
+- A running daemon: `dad daemon` (or `dad daemon install`). Default URL is `http://localhost:4319`. Change it in the plugin settings or with `bb plugin config diffdad set daemonUrl <url>`. Viewing bb from another device? Set `publicUrl` to the URL `bb connect expose 4319` prints.
 - `gh` logged in, for the "needs my review" split.
 
 ## Install
