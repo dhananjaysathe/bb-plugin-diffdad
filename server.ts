@@ -71,7 +71,7 @@ const rowSchema = z.object({
 export type Row = z.infer<typeof rowSchema>;
 
 export const rpcContract = defineRpcContract({
-  daemon_url: { input: z.null(), output: z.object({ url: z.string(), up: z.boolean() }) },
+  daemon_url: { input: z.null(), output: z.object({ url: z.string(), publicUrl: z.string(), up: z.boolean() }) },
   units_mine: {
     input: z.object({ refresh: z.boolean() }).nullable(),
     output: z.object({
@@ -206,7 +206,7 @@ export default async function plugin(bb: BbPluginApi) {
   }
 
   bb.rpc.register(rpcContract, {
-    daemon_url: async () => ({ url: publicBase || base, up: await up() }),
+    daemon_url: async () => ({ url: base, publicUrl: publicBase, up: await up() }),
     units_mine: async (input) => {
       try {
         if (input?.refresh) {

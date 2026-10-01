@@ -2,10 +2,14 @@ import { useCallback, useEffect, useState } from "react";
 import { definePluginApp, useRpc } from "@get-bb/plugin-sdk/app";
 import type { rpcContract, Row } from "./server";
 
+// The public (bb connect) URL only works when bb itself is opened through getbb.app; the desktop app reaches localhost.
+const frameBase = (s: { url: string; publicUrl: string }) =>
+  s.publicUrl && location.hostname.endsWith(".getbb.app") ? s.publicUrl : s.url;
+
 // ponytail: the whole UI is Diff Dad's own, in an iframe. No re-render of narratives here.
 function Frame({ path }: { path: string }) {
   const rpc = useRpc<typeof rpcContract>();
-  const [state, setState] = useState<{ url: string; up: boolean } | null>(null);
+  const [state, setState] = useState<{ url: string; publicUrl: string; up: boolean } | null>(null);
   useEffect(() => {
     rpc.call("daemon_url").then(setState);
   }, [rpc]);
@@ -17,7 +21,7 @@ function Frame({ path }: { path: string }) {
         <code>dad daemon install</code> to keep it running).
       </p>
     );
-  return <iframe title="Diff Dad" src={state.url + path} className="h-full w-full border-0" />;
+  return <iframe title="Diff Dad" src={frameBase(state) + path} className="h-full w-full border-0" />;
 }
 
 function ThreadReview({ threadId }: { threadId: string }) {
